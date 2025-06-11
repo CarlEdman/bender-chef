@@ -19,12 +19,12 @@ import click
 @click.option("--container-size", type=int)
 @click.option("--timeout", type=float)
 
-def cli(clobber, move, dryrun, user_name, password, server_base_url, server_token, client_base_url, client_token, container_size, timeout):
+def main(clobber, move, dryrun, user_name, password, server_base_url, server_token, client_base_url, client_token, container_size, timeout):
     """CLI to Plex REST API"""
     click.echo("CLI")
 
 
-@cli.group()
+@main.group()
 def watchlist():
     """Manage users' centrally-stored watchlist."""
     click.echo("watchlist")
