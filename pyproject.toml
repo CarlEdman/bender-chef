@@ -5,7 +5,7 @@ description = "CLI tool to provide missing Plex functionality through the REST A
 authors = [{ name = "Carl Edman", email = "CarlEdman@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["plexapi (>=4.17.0,<5.0.0)", "clink (>=0.35.0,<0.36.0)"]
+dependencies = ["plexapi (>=4.17.0,<5.0.0)", "click"]
 license = "MIT"
 keywords = ["plex", "plex-server", "plex-media-server", "plexmediaserver"]
 classifiers = [
@@ -18,6 +18,9 @@ classifiers = [
 
 [project.urls]
 repository = "https://github.com/CarlEdman/bender-chef"
+
+[project.scripts]
+benderchef = "bender_chef.bender_chef:cli"
 
 [tool.poetry]
 packages = [{ include = "bender_chef", from = "src" }]
