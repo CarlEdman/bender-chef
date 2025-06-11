@@ -20,14 +20,14 @@ classifiers = [
 repository = "https://github.com/CarlEdman/bender-chef"
 
 [project.scripts]
-benderchef = "benderchef:main"
+benderchef = "benderchef.benderchef:main"
 
 [tool.poetry]
 packages = [{ include = "benderchef", from = "src" }]
 package-mode = true
 
 [tool.poetry.scripts]
-benderchef = "benderchef:main"
+benderchef = "benderchef.benderchef:main"
 
 # [project.entry-points."poetry.application.plugin"]
 # export = "poetry_plugin_export.plugins:ExportApplicationPlugin"

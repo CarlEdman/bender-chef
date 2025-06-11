@@ -45,8 +45,8 @@ def watchlist_export(id):
 
 
 @watchlist.command("transfer")
-@watchlist.argument("from_id", type=int)
-@watchlist.argument("to_id", type=int)
+@click.argument("from_id", type=int)
+@click.argument("to_id", type=int)
 def watchlist_transfer(from_id, to_id):
     """Move all watchlist items of User FROM_ID to user TO_ID."""
     click.echo("transfer")
