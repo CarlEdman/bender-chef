@@ -1,0 +1,17 @@
+[project]
+name = "bender-chef"
+version = "0.0.1"
+description = "CLI tool to provide missing Plex functionality through the REST API"
+authors = [
+    {name = "Carl Edman",email = "CarlEdman@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "plexapi (>=4.17.0,<5.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
