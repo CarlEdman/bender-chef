@@ -2,20 +2,29 @@
 name = "bender-chef"
 version = "0.0.1"
 description = "CLI tool to provide missing Plex functionality through the REST API"
-authors = [
-    {name = "Carl Edman",email = "CarlEdman@gmail.com"}
-]
+authors = [{ name = "Carl Edman", email = "CarlEdman@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = [
-    "plexapi (>=4.17.0,<5.0.0)",
-    "clink (>=0.35.0,<0.36.0)",
-]
+dependencies = ["plexapi (>=4.17.0,<5.0.0)", "clink (>=0.35.0,<0.36.0)"]
 license = "MIT"
+keywords = ["plex", "plex-server", "plex-media-server", "plexmediaserver"]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Environment :: Console",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Multimedia :: Video",
+]
+
+[project.urls]
+repository = "https://github.com/CarlEdman/bender-chef"
 
 [tool.poetry]
-packages = [{include = "bender_chef", from = "src"}]
+packages = [{ include = "bender_chef", from = "src" }]
+package-mode = true
 
+# [project.entry-points."poetry.application.plugin"]
+# export = "poetry_plugin_export.plugins:ExportApplicationPlugin"
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
