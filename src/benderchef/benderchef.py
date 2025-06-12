@@ -1,9 +1,10 @@
 #! python3
 import logging
-
 import click
 import plexapi
 from plexapi.myplex import MyPlexAccount, PlexServer
+
+log = logging.getLogger()
 
 
 @click.group()
@@ -12,37 +13,39 @@ from plexapi.myplex import MyPlexAccount, PlexServer
     "-c",
     "--clobber/--no-clobber",
     default=False,
-    help="if necessary, overwrite existing items.",
+    help="If necessary, overwrite existing items.",
 )
 @click.option(
+    "-m",
     "--move/--copy",
     "move",
     default=False,
-    help="move items.  (i.e., remove original items if successfully transferred elsewhere).",
+    help="Move items (i.e., remove original items if successfully transferred elsewhere).",
 )
 @click.option(
-    "--dryrun",
+    "--dryrun/--no-dryrun",
     "dryrun",
     default=False,
-    help="do not perform operations, but only print them.",
+    help="Do not perform operations, but only print them.",
 )
 @click.option(
     "--debug",
     "loglevel",
+    default=logging.WARNING,
     flag_value=logging.DEBUG,
-    help="print debugging (or higher level) log messages.",
+    help="Print debugging (or higher level) log messages.",
 )
 @click.option(
     "--verbose",
     "loglevel",
-    flag_value=logging.VERBOSE,
-    help="print informational (or higher level) log messages.",
+    flag_value=logging.INFO,
+    help="Print informational (or higher level) log messages.",
 )
 @click.option(
     "--taciturn",
     "loglevel",
     flag_value=logging.ERROR,
-    help="print only error (or higher level) log messages.",
+    help="Print only error (or higher level) log messages.",
 )
 @click.option("--user-name", type=str)
 @click.option("--password", type=str)
@@ -68,6 +71,10 @@ def main(
 ):
     """CLI to Plex REST API"""
     click.echo("CLI")
+
+    if dryrun:
+        loglevel = max(logging.INFO,loglevel)
+    log.setLevel(loglevel)
 
 
 @main.group()
