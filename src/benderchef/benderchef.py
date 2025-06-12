@@ -1,15 +1,20 @@
 #! python3
 import plexapi
 import click
+from plexapi.myplex import MyPlexAccount, PlexServer
 
 
 @click.group()
 @click.version_option()
-@click.option("-c", "--clobber/--no-clobber", default=False)  # "if necessary, overwrite existing items."
-@click.option("-m", "--move/--copy", default=False)  # "delete originals of transferred items."
-@click.option("-d", "--dryrun/--live", default=False)  #  "do not perform operations, but only print them.
-
-
+@click.option(
+    "-c", "--clobber/--no-clobber", default=False
+)  # "if necessary, overwrite existing items."
+@click.option(
+    "-m", "--move/--copy", default=False
+)  # "delete originals of transferred items."
+@click.option(
+    "-d", "--dryrun/--live", default=False
+)  #  "do not perform operations, but only print them.
 @click.option("--user-name", type=str)
 @click.option("--password", type=str)
 @click.option("--server-base-url", type=str)
@@ -18,8 +23,19 @@ import click
 @click.option("--client-token", type=str)
 @click.option("--container-size", type=int)
 @click.option("--timeout", type=float)
-
-def main(clobber, move, dryrun, user_name, password, server_base_url, server_token, client_base_url, client_token, container_size, timeout):
+def main(
+    clobber,
+    move,
+    dryrun,
+    user_name,
+    password,
+    server_base_url,
+    server_token,
+    client_base_url,
+    client_token,
+    container_size,
+    timeout,
+):
     """CLI to Plex REST API"""
     click.echo("CLI")
 
@@ -31,29 +47,33 @@ def watchlist():
 
 
 @watchlist.command("import")
-@click.argument("id", type=int)
-def watchlist_import(id):
-    """Ingest a watchlist to User ID from stdin in JSON format."""
+@click.argument("token", type=int)
+def watchlist_import(token):
+    """Ingest a watchlist to User TOKEN from stdin in JSON format."""
     click.echo("import")
 
 
 @watchlist.command("export")
-@click.argument("id", type=int)
-def watchlist_export(id):
-    """Dump a watchlist of User ID to stdout in JSON format."""
+@click.argument("token", type=int)
+def watchlist_export(token):
+    """Dump a watchlist of User TOKEN to stdout in JSON format."""
     click.echo("export")
+    account = MyPlexAccount()
+    for i in account.watchlist(sort="name:asc"):
+      click.echo(repr(i))
+#    plex = account.resource('<SERVERNAME>').connect()  # returns a PlexServer instance
+# plex = PlexServer()
+#for video in plex.library.section("Movies").search(unwatched=True):
+#    print(video.title)
+
 
 
 @watchlist.command("transfer")
-@click.argument("from_id", type=int)
-@click.argument("to_id", type=int)
-def watchlist_transfer(from_id, to_id):
-    """Move all watchlist items of User FROM_ID to user TO_ID."""
+@click.argument("from_token", type=int)
+@click.argument("to_token", type=int)
+def watchlist_transfer(from_token, to_token):
+    """Move all watchlist items of User FROM_TOKEN to user TO_TOKEN."""
     click.echo("transfer")
-
-
-if __name__ == "__main__":
-    pass
 
 
 # log = logging.getLogger()
