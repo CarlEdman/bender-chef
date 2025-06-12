@@ -7,7 +7,8 @@ from plexapi.myplex import MyPlexAccount, PlexServer
 log = logging.getLogger()
 
 
-@click.group()
+@click.group(context_settings={"auto_envvar_prefix": "BENDER_CHEF"},
+    epilog="See https://github.com/CarlEdman/bender-chef for more details",)
 @click.version_option()
 @click.option(
     "-c",
@@ -23,7 +24,8 @@ log = logging.getLogger()
     help="Move items (i.e., remove original items if successfully transferred elsewhere).",
 )
 @click.option(
-    "--dryrun/--no-dryrun",
+    "-d",
+    "--dryrun/--liverun",
     "dryrun",
     default=False,
     help="Do not perform operations, but only print them.",
@@ -47,14 +49,40 @@ log = logging.getLogger()
     flag_value=logging.ERROR,
     help="Print only error (or higher level) log messages.",
 )
-@click.option("--user-name", type=str)
-@click.option("--password", type=str)
-@click.option("--server-base-url", type=str)
-@click.option("--server-token", type=str)
-@click.option("--client-base-url", type=str)
-@click.option("--client-token", type=str)
-@click.option("--container-size", type=int)
-@click.option("--timeout", type=float)
+@click.option(
+    "--user-name", type=str, help="User name used to log in to https://plex.tv."
+)
+@click.option(
+    "--password", type=str, help="Password used to log in to https://plex.tv."
+)
+@click.option(
+    "--server-base-url",
+    type=str,
+    help="URL of local Plex server to be used, e.g., https://plex.example.com:32400.",
+)
+@click.option(
+    "--server-token",
+    type=str,
+    help="""Token used by owner of server to identify and authenticate.
+Instructions for retrieval are at https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/.""",
+)
+@click.option("--client-base-url", type=str, help="Local Plex player's URL.")
+@click.option(
+    "--client-token",
+    type=str,
+    help="Token used to identify and authenticate individual plex user.",
+)
+@click.option(
+    "--container-size",
+    type=int,
+    default=50,
+    help="Number of items to request with each plex server call.  Should only affect performance, not results.",
+)
+@click.option(
+    "--timeout",
+    type=float,
+    help="Timeout for server requests in seconds.  No effect unless servers or connection are overloaded.",
+)
 def main(
     clobber,
     move,
@@ -69,11 +97,19 @@ def main(
     timeout,
     loglevel,
 ):
-    """CLI to Plex REST API"""
+    """
+    CLI to Plex REST API.
+
+    Options can be set via environment variables, like this:\n
+    export BENDER_CHEF_USER_NAME=Memememe\n
+    export BENDER_CHEF_CLOBBER=True
+
+    Much more to come.
+    """
     click.echo("CLI")
 
     if dryrun:
-        loglevel = max(logging.INFO,loglevel)
+        loglevel = max(logging.INFO, loglevel)
     log.setLevel(loglevel)
 
 
@@ -149,27 +185,3 @@ def history_export(token):
 def history_transfer(from_token, to_token):
     """Move all history from User FROM_TOKEN to User TO_TOKEN."""
     click.echo("transfer")
-
-
-# log = logging.getLogger()
-
-# parser = argparse.ArgumentParser(
-#     fromfile_prefix_chars="@", prog=prog, epilog="Written by: " + author
-# )
-
-# parser.add_argument(
-#     "--log", dest="logfile", action="store", help="location of alternate log file."
-# )
-
-# parser.set_defaults(loglevel=logging.WARN)
-
-# for i in [
-#     (pathlib.Path.home() / ".config" / prog).with_suffix(".ini"),
-#     pathlib.Path(sys.argv[0]).with_suffix(".ini"),
-#     pathlib.Path(prog).with_suffix(".ini"),
-#     (pathlib.Path("..") / prog).with_suffix(".ini"),
-# ]:
-#     if i.exists():
-#         sys.argv.insert(1, f"@{i}")
-
-# args = parser.parse_args()
