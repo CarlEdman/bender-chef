@@ -163,8 +163,6 @@ def history_transfer(from_token, to_token):
 
 # parser.set_defaults(loglevel=logging.WARN)
 
-# commands_parser = parser.add_subparsers(dest="command", help="Available commands")
-
 # for i in [
 #     (pathlib.Path.home() / ".config" / prog).with_suffix(".ini"),
 #     pathlib.Path(sys.argv[0]).with_suffix(".ini"),
@@ -175,6 +173,3 @@ def history_transfer(from_token, to_token):
 #         sys.argv.insert(1, f"@{i}")
 
 # args = parser.parse_args()
-
-# if args.dryrun and args.loglevel > logging.INFO:
-#     args.loglevel = logging.INFO
