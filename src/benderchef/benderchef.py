@@ -69,6 +69,9 @@ def main(
     """CLI to Plex REST API"""
     click.echo("CLI")
 
+    if dryrun and loglevel > logging.INFO:
+      loglevel = logging.INFO
+
 
 @main.group()
 def watchlist():
