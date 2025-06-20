@@ -2,13 +2,91 @@
 import logging
 import click
 import plexapi
-from plexapi.myplex import MyPlexAccount, PlexServer
+from plexapi.myplex import MyPlexAccount
+from plexapi.server import PlexServer
 
 log = logging.getLogger()
 
+plex = None
 
-@click.group(context_settings={"auto_envvar_prefix": "BENDER_CHEF"},
-    epilog="See https://github.com/CarlEdman/bender-chef for more details",)
+
+class BenderChefGlobal:
+    user_name = None
+
+    def get_user_name():
+        return BenderChefGlobal.user_name
+
+    def set_user_name(user_name):
+        BenderChefGlobal.user_name = user_name
+
+    password = None
+
+    def get_password():
+        return BenderChefGlobal.password
+
+    def set_password(password):
+        BenderChefGlobal.password = password
+
+    server_name = None
+
+    def get_server_name():
+        return BenderChefGlobal.server_name
+
+    def set_server_name(server_name):
+        BenderChefGlobal.server_name = server_name
+
+    account = None
+
+    def get_account():
+        if BenderChefGlobal.account is None:
+            try:
+                BenderChefGlobal.account = MyPlexAccount(
+                    BenderChefGlobal.user_name, BenderChefGlobal.password
+                )
+            except Exception:
+                pass
+
+        return BenderChefGlobal.account
+
+    def set_account(account):
+        BenderChefGlobal.account = account
+
+    plex = None
+
+    def get_plex():
+        if BenderChefGlobal.plex is None:
+            try:
+                BenderChefGlobal.plex = (
+                    BenderChefGlobal.get_account()
+                    .resource(BenderChefGlobal.get_server_name())
+                    .connect()
+                )
+
+            except Exception:
+                pass
+        if BenderChefGlobal.plex is None:
+            try:
+                BenderChefGlobal.plex = PlexServer(
+                    BenderChefGlobal.get_base_url(), BenderChefGlobal.get_token()
+                )
+            except Exception:
+                pass
+        return BenderChefGlobal.plex
+
+    def set_plex(plex):
+        BenderChefGlobal.plex = plex
+
+        # if plex is None:
+        #     logging.critical(
+        #         "Could not establish connection to a server either through user_name, password, and server_name, or through server_base_url and server_token."
+        #     )
+        #     raise plexapi.exceptions.Unauthorized()
+
+
+@click.group(
+    context_settings={"auto_envvar_prefix": "BENDER_CHEF"},
+    epilog="See https://github.com/CarlEdman/bender-chef for more details",
+)
 @click.version_option()
 @click.option(
     "-c",
@@ -66,6 +144,11 @@ log = logging.getLogger()
     help="""Token used by owner of server to identify and authenticate.
 Instructions for retrieval are at https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/.""",
 )
+@click.option(
+    "--server-name",
+    type=str,
+    help="""Owner-given name of local server to work on.""",
+)
 @click.option("--client-base-url", type=str, help="Local Plex player's URL.")
 @click.option(
     "--client-token",
@@ -91,18 +174,19 @@ def main(
     password,
     server_base_url,
     server_token,
+    server_name,
     client_base_url,
     client_token,
     container_size,
     timeout,
     loglevel,
 ):
-    """
-    CLI to Plex REST API.
+    """CLI to Plex REST API.
 
-    Options can be set via environment variables, like this:\n
-    export BENDER_CHEF_USER_NAME=Memememe\n
-    export BENDER_CHEF_CLOBBER=True
+    \b
+    Options can be set via environment variables, e.g., like this:
+        export BENDER_CHEF_USER_NAME=MeMeMeMe
+        export BENDER_CHEF_CLOBBER=True
 
     Much more to come.
     """
@@ -130,8 +214,7 @@ def watchlist_import(token):
 @click.argument("token", type=int)
 def watchlist_export(token):
     """Dump a watchlist of User TOKEN to stdout in JSON format."""
-    click.echo("export")
-    account = MyPlexAccount()
+    account = plexapi.myplex.MyPlexAccount()
     for i in account.watchlist(sort="name:asc"):
         click.echo(repr(i))
 
@@ -168,7 +251,7 @@ def history_import(token):
 def history_export(token):
     """Dump a watch history of User TOKEN to stdout in JSON format."""
     click.echo("export")
-    # account = MyPlexAccount()
+    # account = plexapi.myplex.MyPlexAccount()
     # for i in account.history(sort="name:asc"):
     #     click.echo(repr(i))
 
@@ -185,3 +268,13 @@ def history_export(token):
 def history_transfer(from_token, to_token):
     """Move all history from User FROM_TOKEN to User TO_TOKEN."""
     click.echo("transfer")
+
+
+@main.group()
+def token():
+    """Manage users' tokens."""
+
+
+@token.command("get")
+def token_get():
+    """Obtain token corresponding to currently specified (or default) user and password."""
